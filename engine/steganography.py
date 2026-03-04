@@ -1,3 +1,6 @@
+from PIL import Image
+import numpy as np
+
 delimitador = "#####"
 
 
@@ -28,13 +31,37 @@ def binario_para_texto(binario):
     return texto
 
 
-if __name__ == "__main__":
-    segredo = "O cofre ta atras do quadro"
+def hide_msg(image, texto):
+    image = Image.open(image)
+    pixels = np.array(image)
+    formato_original = pixels.shape
+    binario = texto_para_binario(texto)
 
-    print(f"1. Mensagem Original: {segredo}")
+    if pixels.size < len(binario):
+        raise ValueError("The image is too small to hide message")
 
-    binario = texto_para_binario(segredo)
-    print(f"2. Tripa Binária (vai pros pixels): {binario}")
+    pixels = pixels.flatten()
 
-    revelado = binario_para_texto(binario)
-    print(f"3. Mensagem Revelada: {revelado}")
+    for i in range(len(binario)):
+        bit = int(binario[i])
+        pixel_atual = pixels[i]
+        pixel_atualizado = (pixel_atual & 254) | bit
+        pixels[i] = pixel_atualizado
+
+    pixels = pixels.reshape(formato_original)
+
+    image_with_msg = Image.fromarray(pixels.astype(np.uint8))
+
+    return image_with_msg
+
+
+def reveal_msg(image_path):
+    image = Image.open(image_path)
+    pixels = np.array(image)
+    pixels = pixels.flatten()
+
+    bits = "".join((pixels & 1).astype(str))
+
+    texto = binario_para_texto(bits)
+
+    return texto
