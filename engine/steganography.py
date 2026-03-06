@@ -1,5 +1,7 @@
 from PIL import Image
 import numpy as np
+from crypto import gerar_chave, criptografar, descriptografar
+
 
 delimitador = "#####"
 
@@ -31,11 +33,11 @@ def binario_para_texto(binario):
     return texto
 
 
-def hide_msg(image, texto):
+def hide_msg(image, texto_criptografado):
     image = Image.open(image)
     pixels = np.array(image)
     formato_original = pixels.shape
-    binario = texto_para_binario(texto)
+    binario = texto_para_binario(texto_criptografado)
 
     if pixels.size < len(binario):
         raise ValueError("The image is too small to hide message")
@@ -62,6 +64,6 @@ def reveal_msg(image_path):
 
     bits = "".join((pixels & 1).astype(str))
 
-    texto = binario_para_texto(bits)
+    texto_criptografado = binario_para_texto(bits)
 
-    return texto
+    return texto_criptografado
