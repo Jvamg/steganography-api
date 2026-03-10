@@ -1,6 +1,6 @@
 from PIL import Image
 import numpy as np
-from crypto import gerar_chave, criptografar, descriptografar
+from engine.crypto import gerar_chave, criptografar, descriptografar
 
 
 delimitador = "#####"
